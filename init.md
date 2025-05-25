@@ -45,8 +45,14 @@ git status
 ```
 
 Everything look good? Send it up.
+
 ```
 git add .
 git commit -m "Initial commit"
 git push -u origin main
 ```
+
+# other commands
+
+`dotnet add Example/Example.csproj package Microsoft.Extensions.Http -f net8.0`
+
