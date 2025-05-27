@@ -7,6 +7,12 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
+# if DEBUG
+    .AddCircuitOptions(opt =>
+    {
+        opt.DetailedErrors = true;
+    })
+# endif
     .AddInteractiveWebAssemblyComponents();
 
 builder.Services.AddScoped<MapJSInterop>();

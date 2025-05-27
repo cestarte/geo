@@ -12,10 +12,12 @@ namespace LMap.Client.JSInterop;
 public class MapJSInterop : IAsyncDisposable
 {
     private readonly Lazy<Task<IJSObjectReference>> moduleTask;
+    public IJSObjectReference? Map { get; set; }
+    public List<IJSObjectReference> Markers { get; set; } = new();
 
     public MapJSInterop(IJSRuntime jsRuntime)
     {
-        moduleTask = new (() => jsRuntime.InvokeAsync<IJSObjectReference>(
+        moduleTask = new(() => jsRuntime.InvokeAsync<IJSObjectReference>(
             "import", "./map.js").AsTask());
     }
 
@@ -25,10 +27,20 @@ public class MapJSInterop : IAsyncDisposable
         return await module.InvokeAsync<string>("showPrompt", message);
     }
 
-    public async ValueTask InitMap(ElementReference elementRef)
+    public async ValueTask<IJSObjectReference> InitMap(ElementReference elementRef)
     {
         var module = await moduleTask.Value;
-        await module.InvokeVoidAsync("initMap", elementRef);
+        var map = await module.InvokeAsync<IJSObjectReference>("initMap", elementRef);
+        Map = map;
+        return map;
+    }
+
+    public async ValueTask<IJSObjectReference> AddMarker(double latitude, double longitude, string popupText)
+    {
+        var module = await moduleTask.Value;
+        var marker = await module.InvokeAsync<IJSObjectReference>("addMarker", Map, latitude, longitude, popupText);
+        Markers.Add(marker);
+        return marker;
     }
 
     public async ValueTask DisposeAsync()
