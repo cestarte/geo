@@ -1,0 +1,33 @@
+@page "/map"
+@* @rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false)) *@
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+@using LMap.Client.JSInterop
+
+@inject IJSRuntime JSRuntime
+@inject LMap.Client.JSInterop.MapJSInterop MapJS
+
+<script src="./leaflet-1.9.4/leaflet.js"></script>
+<link href="./leaflet-1.9.4/leaflet.css" rel="stylesheet" />
+
+<div @ref="mapContainer" style="width: 40rem; height: 50rem;"></div>
+
+
+@code {
+    private ElementReference mapContainer;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await InitializeMap();
+            //await MapJS.Prompt("test");
+        }
+    }
+
+    private async Task InitializeMap()
+    {
+        // Assuming you have a JavaScript function to initialize the map
+        //await JSRuntime.InvokeVoidAsync("initMap", mapContainer);
+        await MapJS.InitMap(mapContainer);
+    }
+}
